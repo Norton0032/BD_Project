@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8.2.0
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: course
+  web_server:
+    build:
+      context: .
+      dockerfile: ./project/Dockerfile
+    restart: always
+    volumes:
+    - ./project:/var/www/html
+    ports:
+      - 8000:80
+    links:
+      - db
+    depends_on:
+      - db
+volumes:
+  db_data:
